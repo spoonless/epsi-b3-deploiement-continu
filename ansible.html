@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Ansible</title>
+	<meta name="author" content="David Gayerie">
+	<link href="css/article.css" rel="stylesheet" media="screen">
+	<link href="css/print-article.css" rel="stylesheet" media="print">
+	<link href="highlight/styles/zenburn.css" rel="stylesheet">
+	
+	<script src="highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	<script src="js/toc.js"></script>
+</head>
+<body>
+	<div id="titleBar">
+		<a href="index.html" title="Retourner au sommaire"><img src="assets/go-home.png"></a>
+ 		<a href="https://github.com/spoonless/epsi-b3-deploiement-continu/archive/gh-pages.zip" title="Télécharger tout le cours"><img src="assets/download.png"></a>
+		<script>document.write(document.title)</script> - EPSI B3 2016/2017 - <a href="mailto:david.gayerie.epsi@mailoo.org">David Gayerie</a>
+		<span class="license"><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/"><img alt="Licence Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/3.0/fr/80x15.png" /></a></span>
+	</div>
+
+	<header></header>
+	<article>
+		<h1><script>document.write(document.title)</script></h1>
+		<section id="toc"></section>
+		
+		<p><a href="http://docs.ansible.com/ansible/index.html">Ansible</a> est un outil d'automatisation pour la maintenance de systèmes et le
+		déploiement d'applications.</p>
+		<p>Ansible permet de définir une liste de machines en les associant à des groupes. L'ensemble de ces groupes est appelé un inventaire
+		(<em>inventory</em>). Il est ensuite possible de réaliser des <em>tâches</em> sur un ou plusieurs groupes (et donc une ou plusieurs
+		machine) en faisant appel à des <em>modules</em>. Pour chaque module, Ansible établit une connexion SSH machine par machine
+		et vérifie si des commandes doivent être exécutées selon l'état de la machine et, le cas échéant, les exécute.</p>
+		<p>Il est possible de regrouper un ensemble de tâches dans un <em><strong>playbook</strong></em> qui va définir l'état d'un groupe
+		de machines. Lorsqu'on exécute un <em>playbook</em>, Ansible ne va effectuer que les actions nécessaires pour rendre la machine
+		conforme au <em>playbook</em>.</p>
+		
+		<section>
+			<h2>Installation</h2>
+			<p>Ansible est écrit en Python. Si vous disposez du gestionnaire de paquets <code>pip</code> alors la façon la plus simple d'installer
+			Ansible est probablement&nbsp;:</p>
+			<pre><code class="shell">
+sudo pip install ansible
+			</code></pre>
+			<p>Pour les autres méthodes d'installation, vous pouvez vous reporter à la <a href="http://docs.ansible.com/ansible/intro_installation.html#getting-ansible">documentation</a>.</p>
+		</section>
+		
+		<section>
+			<h2>Création d'un inventaire</h2>
+			
+			<p>Un <a href="http://docs.ansible.com/ansible/intro_inventory.html">inventaire</a> (<em>inventory</em>) est un catalogue
+			des adresses machines (aussi appelées <em>nœuds</em> ou <em>hosts</em>) décrivant notre infrastructure.</p>
+			<p>Par défaut, l'inventaire se trouve dans le fichier <code>/etc/ansible/hosts</code>. Il est également possible de préciser
+			à Ansible d'utiliser un inventaire particulier, ce qui évite de modifier le fichier système, notamment pour les phases de test.</p>
+			
+			<p>Le fichier d'inventaire suit le format de fichier <code>INI</code>&nbsp;:</p>
+			
+			<figure>
+				<figcaption>Format général d'un inventaire</figcaption>
+				<pre><code>
+[NOM_GROUPE]
+ma-machine
+ma-machine2
+
+[NOM_GROUPE2]
+autre-machine
+autre-machine2
+				</code></pre>
+			</figure>
+			
+			<p>Il est possible de définir un groupe comme étant un ensemble d'autres groupes grâce à la syntaxe <code>[NOM_GROUPE:children]</code>.
+			Ce groupe ne contient alors que des noms d'autres groupes de l'inventaire.</p>
+			<p>Si les machines sont numérotées, vous pouvez utiliser une syntaxe abrégée de la forme <code>racine&lt;01&gt;:&lt;09&gt;</code>
+			pour eviter de lister une machine par ligne.</p>
+
+			<figure>
+				<figcaption>Exemple d'un inventaire</figcaption>
+				<pre><code>
+[web]
+web01:04
+dmz.web01:05
+
+[sql]
+mysql01:02
+
+[supervisor]
+192.10.0.32
+
+[backup:children]
+web
+sql
+				</code></pre>
+			</figure>
+			<p>Il existe un groupe implicite&nbsp;: <em>all</em>. Ce groupe désigne l'ensemble des machines décrites dans l'inventaire.</p>
+			<p>Les machines présentes dans l'inventaire doivent être administrables par Ansible. Pour cela, il faut que chaque machine
+			soit accessible <i>via</i> SSH et qu'une version de Python &gt;=2.7 y soit installée. De plus, pour administrer correctement
+			la machine, il est probablement nécessaire que le compte utilisateur pour la connexion SSH puisse obtenir des privilèges
+			d'exécution (par exemple avec la commande <code>sudo</code>).</p>
+		</section>
+		
+		<section>
+			<h2>Exécution de Ansible</h2>
+			
+			<p>Vous pouvez exécuter <code>ansible</code> avec les paramètres suivants&nbsp;:</p>
+			
+			<dl>
+				<dt>-i &lt;fichier inventaire&gt;</dt>
+				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
+
+				<dt>-C, --check</dt>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realiser sur les machines.</dd>
+
+				<dt>-m &lt;nom du module&gt;</dt>
+				<dd>spécifie le module que l'on souhaite invoquer.</dd>
+
+				<dt>-a &lt;arguments&gt;</dt>
+				<dd>spécifie les arguments à passer au module au moment de l'exécution.</dd>
+
+				<dt>-k</dt>
+				<dd>demande le mot de passe pour la connexion SSH</dd>
+
+				<dt>-u &lt;utilisateur&gt;</dt>
+				<dd>spécifie le login utilisateur pour la connexion SSH</dd>
+
+				<dt>-b, --become</dt>
+				<dd>exécute les commandes distantes en tant que superutilisateur</dd>
+
+				<dt>-K</dt>
+				<dd>demande le mot de passe pour les opérations demandant des privilèges (principalement lors de l'exécution d'une commande <code>sudo</code> sur la machine distante)</dd>
+			</dl>
+			
+			<p>Vous pouvez par exemple tester votre inventaire en utilisant le module <code>ping</code> pour vous assurer que vous pouvez
+			joindre toutes les machines de votre inventaire</p>
+			
+			<pre><code class="shell">
+ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
+			</code></pre>
+			
+		</section>
+	</article>
+	<article class="exercice">
+		<h2>Exercice&nbsp;: création d'un machine avec LXC</h2>
+		<dl>
+			<dt>Objectifs</dt>
+			<dd>Avoir une machine de référence administrable avec Ansible</dd>
+		</dl>
+		<p>Reprenez votre script de création de machine écrit lors du chapitre sur <a href="lxc.html">LXC</a> et
+		ajoutez les instructions nécessaires pour avoir une machine administrable avec Ansible.</p>
+
+		<pre><code class="shell">
+lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
+lxc exec &lt;nom du conteneur&gt; -- apt update
+lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
+lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
+lxc exec &lt;nom du conteneur&gt; -- adduser $USER
+lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
+		</code></pre>
+		
+		<aside class="tip">
+			Il est fortement recommandé de faire un snapshot de l'état de ce conteneur et de travailler ensuite
+			sur des copies afin de conserver une machine de référence pour tous les exercices.
+		</aside>
+
+	</article>
+
+	<article class="exercice">
+		<h2>Exercice&nbsp;: première utilisation d'Ansible</h2>
+		<dl>
+			<dt>Objectifs</dt>
+			<dd>comprendre le fonctionnement d'Ansible</dd>
+		</dl>
+		
+		<p>Créez deux conteneurs à partir de celui créé à l'exercice précédent. Créez un inventaire Ansible
+		en mettant chaque machine dans un groupe différent (par exemple groupe1 et groupe2).</p>
+		<p>Exécutez ensuite <code>ansible</code>&nbsp;:</p>
+		
+		<pre><code class="shell">
+ansible -k -i &lt;fichier inventaire&gt; groupe1 -m ping
+ansible -k -i &lt;fichier inventaire&gt; groupe2 -m ping
+ansible -k -i &lt;fichier inventaire&gt; all -m ping
+		</code></pre>
+		
+		<p>Essayer ensuite d'utiliser le module <code>raw</code> qui permet d'exécuter n'importe quelle commande sur les machines distantes&nbsp;:</p>
+		
+		<figure>
+			<figcaption>Exemple d'utilisation du module raw pour exécuter la commande date</figcaption>
+			<pre><code class="shell">
+ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
+			</code></pre>
+		</figure>
+		
+		<p>Utilisez le module <code>raw</code> pour exécuter des commandes nécessitant des privilèges comme <code>apt update</code>.</p>
+
+	</article>
+
+	<footer class="license">
+		<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/"><img alt="Licence Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/3.0/fr/88x31.png" /></a><br />Cette œuvre est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/">Licence Creative Commons Attribution -  Partage dans les Mêmes Conditions 3.0 France</a>.
+	</footer>
+</body>
+</html>
