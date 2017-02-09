@@ -138,6 +138,16 @@ git reset -- &lt;fichier/répertoire&gt;
 git checkout &lt;fichier/répertoire&gt;
 		</code></pre>
 		<p>Permet d'annuler les modifications locales d'un fichier. Le fichier ne doit pas être dans la staging area (utilisez git reset pour l'en sortir). Le checkout annule les modifications et les suppressions.</p>
+
+		<pre><code class="shell">
+git diff &lt;fichier/répertoire&gt;
+		</code></pre>
+		<p>Permet de visualiser les différences entre les modifications locales et le dépôt local.</p>
+
+		<pre><code class="shell">
+git diff --staged &lt;fichier/répertoire&gt;
+		</code></pre>
+		<p>Permet de visualiser les différences entre les modifications dans la staging area et le dépôt local.</p>
 	</section>
 
 	<section id="validation-des-modifications">
