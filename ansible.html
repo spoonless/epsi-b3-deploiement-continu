@@ -141,7 +141,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
 	<article class="exercice">
 		<h2>Exercice&nbsp;: création d'un machine avec LXC</h2>
 		<dl>
-			<dt>Objectifs</dt>
+			<dt>Objectif</dt>
 			<dd>Avoir une machine de référence administrable avec Ansible</dd>
 		</dl>
 		<p>Reprenez votre script de création de machine écrit lors du chapitre sur <a href="lxc.html">LXC</a> et
@@ -166,7 +166,7 @@ lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
 	<article class="exercice">
 		<h2>Exercice&nbsp;: première utilisation d'Ansible</h2>
 		<dl>
-			<dt>Objectifs</dt>
+			<dt>Objectif</dt>
 			<dd>comprendre le fonctionnement d'Ansible</dd>
 		</dl>
 		
@@ -180,7 +180,7 @@ ansible -k -i &lt;fichier inventaire&gt; groupe2 -m ping
 ansible -k -i &lt;fichier inventaire&gt; all -m ping
 		</code></pre>
 		
-		<p>Essayer ensuite d'utiliser le module <code>raw</code> qui permet d'exécuter n'importe quelle commande sur les machines distantes&nbsp;:</p>
+		<p>Essayez ensuite d'utiliser le module <code>raw</code> qui permet d'exécuter n'importe quelle commande sur les machines distantes&nbsp;:</p>
 		
 		<figure>
 			<figcaption>Exemple d'utilisation du module raw pour exécuter la commande date</figcaption>
@@ -191,6 +191,170 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 		
 		<p>Utilisez le module <code>raw</code> pour exécuter des commandes nécessitant des privilèges comme <code>apt update</code>.</p>
 
+	</article>
+	
+	<article>
+		<section>
+			<h2>Écriture de playbooks</h2>
+			
+			<p>Un <a href="http://docs.ansible.com/ansible/playbooks.html"><strong>playbook</strong></a> est à la fois un format de fichier et une arborescence de fichiers
+			permettant de définir l'état d'une infrastructure de machines. Avec les playbooks, nous avons à notre disposition un outil qui nous permet de gérer
+			notre <a href="https://en.wikipedia.org/wiki/Infrastructure_as_Code">infrastructure comme du code</a>&nbsp;: c'est-à-dire que la gestion des machines se fait à partir de fichiers semblables à du code source applicatif. Il devient
+			donc possible d'utiliser des gestionnaires de source comme Git pour conserver, partager et versionner notre infrastructure mais également d'imaginer
+			des procédures automatisées de test et de déploiement non seulement des applicatifs mais également de machines.</p>
+			
+			<p>Dans son sens le plus strict, un <strong>playbook</strong> est un fichier au format <a href="https://fr.wikipedia.org/wiki/YAML">YAML</a>.</p>
+			
+			<aside class="tip">
+				<p>Par convention, les fichiers YAML ont extension <em>yml</em>.</p>
+			</aside>
+			
+			<figure>
+				<figcaption>Exemple de fichier playbook</figcaption>
+				<pre><code class="yaml">
+---
+- hosts: web
+
+  tasks:
+    - name: checks apache2 is present
+      package: name=apache2 state=present
+
+				</code></pre>
+			</figure>
+			
+			<p>Un fichier playbook peut possèder les sections suivantes&nbsp;:</p>
+			
+			<dl>
+				<dt>hosts</dt>
+				<dd>Le nom de groupe de l'inventaire</dd>
+				<dt>vars</dt>
+				<dd>Une liste de variables qui peuvent être utilisées dans le corps du playbook en utilisant la notation Jinja2 <code>{{ nom_variable }}</code></dd>
+				<dt>remote_user</dt>
+				<dd>Le login de l'utilisateur distant utilisé pour réaliser les tâches</dd>
+				<dt>tasks</dt>
+				<dd>La liste des tâches à réaliser si nécessaire</dd>
+				<dt>handlers</dt>
+				<dd>La liste des actions qui pourront être exécutées lors d'une notification</dd>
+			</dl>
+			
+			<p>Dans les sections <code>tasks</code> et <code>handlers</code>, on trouve la déclaration des modules avec leurs arguments.
+			Pour chacun, on utilisera la notation&nbsp;:</p>
+			
+			<pre><code class="yaml">
+  - name: &lt;description de la tâche&gt;
+    &lt;module&gt;: &lt;arg1&gt;=&lt;valeur1&gt; &lt;arg2&gt;=&lt;valeur2&gt;...
+			</code></pre>
+
+			<p>...ou la notation plus longue&nbsp;:</p>
+			
+			<pre><code class="yaml">
+  - name: &lt;description de la tâche&gt;
+    &lt;module&gt;: 
+      &lt;arg1&gt;: &lt;valeur1&gt;
+      &lt;arg2&gt;: &lt;valeur2&gt;
+      ...
+			</code></pre>
+			
+			<aside>
+				<p>Il existe de nombreux modules disponibles pour Ansible. Vous pouvez consulter la liste dans la <a href="http://docs.ansible.com/ansible/modules_by_category.html">documentation officielle</a>.</p>
+			</aside>
+			
+			<p>Les <code>handlers</code> permettent de définir des modules qui ne seront appelés que si certaines tâches sont exécutées.
+			On ajoute l'attibut <code>notify</code> à une tâche pour indiquer que si la tâche est exécutée alors le handler doit aussi l'être
+			</p>
+			
+			<figure>
+				<figcaption>Exemple d'utilisation d'un handler</figcaption>
+				<pre><code class="yaml">
+---
+- hosts: web
+  remote_user: root
+
+  handlers:
+    - name : reload apache2 service
+      service: name=apache2 state=reloaded enabled=yes
+
+  tasks:
+    - name: checks apache2 is present
+      package: name=apache2 state=present
+
+    - name: checks apache2 modules enabled
+      apache2_module: name=ssl state=present
+      notify:
+        - reload apache2 service
+				</code></pre>
+			</figure>
+			
+			<p>L'exemple ci-dessus vérifie que le serveur Web Apache est installé et que le module ssl est activé pour ce serveur.
+			Si ce n'est pas le cas, alors ansible installera la module puis notifiera le <code>handler</code> "reload apache2 service".
+			Ce dernier effectuera une <em>reload</em> de la configuration du serveur. Les <code>handlers</code> sont donc une façon
+			simple de définir des tâches conditionnelles.</p>
+		</section>
+		
+		<section>
+			<h2>Éxécution d'un playbook</h2>
+			
+			<p>Vous pouvez exécuter <code>ansible-playbook</code> avec les paramètres suivants&nbsp;:</p>
+			
+			<dl>
+				<dt>-i &lt;fichier inventaire&gt;</dt>
+				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
+
+				<dt>-C, --check</dt>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realiser sur les machines.</dd>
+
+				<dt>-k</dt>
+				<dd>demande le mot de passe pour la connexion SSH</dd>
+
+				<dt>-u &lt;utilisateur&gt;</dt>
+				<dd>spécifie le login utilisateur pour la connexion SSH</dd>
+
+				<dt>-b, --become</dt>
+				<dd>exécute les commandes distantes en tant que superutilisateur</dd>
+
+				<dt>-K</dt>
+				<dd>demande le mot de passe pour les opérations demandant des privilèges (principalement lors de l'exécution d'une commande <code>sudo</code> sur la machine distante)</dd>
+			</dl>
+			
+			<figure>
+				<figcaption>Exemple d'exécution d'un playbook</figcaption>
+				<pre><code class="shell">
+ansible-playbook -i &lt;inventaire&gt; -k -K -b monplaybook.yml
+				</code></pre>
+			</figure>
+			
+			
+		</section>
+	</article>
+
+	<article class="exercice">
+		<h2>Exercice&nbsp;: premier playbook</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>utiliser <code>ansible-playbook</code></dd>
+		</dl>
+		<p>Exécuter le playbook suivant sur un conteneur LXC&nbsp;:</p>
+
+		<pre><code class="yaml">
+---
+- hosts: web
+  remote_user: root
+
+  handlers:
+    - name : reload apache2 service
+      service: name=apache2 state=reloaded enabled=yes
+
+  tasks:
+    - name: checks apache2 is present
+      package: name=apache2 state=present
+
+    - name: checks apache2 modules enabled
+      apache2_module: name=ssl state=present
+      notify:
+        - reload apache2 service
+		</code></pre>
+		
+		<p>Vérifier que le serveur HTTP est bien disponible.</p>
 	</article>
 
 	<footer class="license">
