@@ -132,9 +132,8 @@ lxc copy &lt;nom du conteneur&gt;/&lt;nom du snapshot&gt; &lt;nom du nouveau con
 lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
 lxc exec &lt;nom du conteneur&gt; -- apt update
 lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
-lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo
+lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server
 lxc exec &lt;nom du conteneur&gt; -- adduser <span class="name variable">$USER</span>
-lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo <span class="name variable">$USER</span>
 		</code></pre>
 		<aside class="tip">
 			<p>Le temps de création d'un conteneur peut être assez long notamment à cause des mises à jour nécessaires

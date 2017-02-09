@@ -102,14 +102,14 @@ git status
 		</dl>
 
 		<aside>
-			<p>Git ne connaît pas directement la notion de répertoire. Il ne gère que les fichiers et les liens symboliques.
-			Ainsi, il n'est pas nécessaire d'ajouter ou de supprimer un répertoire. Un répertoire existe pour Git dès qu'il contient un fichier et, à l'opposé, un répertoire
+			<p>Git ne connaît pas directement la notion de répertoire. Il ne suit que les fichiers et les liens symboliques.
+			Un répertoire existe pour Git dès qu'il contient un fichier et, à l'opposé, un répertoire
 			n'existe plus dès qu'il ne contient plus de fichier ou de sous répertoire contenant eux-mêmes des fichiers.</p>
 		</aside>
 
 		<p>Les commandes ci-dessous permettent de gérer les états d'un fichier&nbsp;:</p>
 		<pre><code class="shell">
-git add &lt;fichier&gt;
+git add &lt;fichier/répertoire&gt;
 		</code></pre>
 		<p>Permet d'ajouter le fichier à la <strong>staging area</strong>. S'il s'agit d'un nouveau fichier ou s'il a été modifié, le fichier passe à l'état Staged sinon cette commande est sans effet.</p>
 
@@ -130,12 +130,12 @@ git rm &lt;fichier&gt;
 		<p>Permet d'ajouter le fichier à la staging area en demandant sa suppression. Le fichier passe à l'état Staged et est supprimé du répertoire de travail.</p>
 
 		<pre><code class="shell">
-git reset -- &lt;fichier&gt;
+git reset -- &lt;fichier/répertoire&gt;
 		</code></pre>
 		<p>Permet de retirer de la staging area un fichier qui y a été ajouté.</p>
 
 		<pre><code class="shell">
-git checkout &lt;fichier&gt;
+git checkout &lt;fichier/répertoire&gt;
 		</code></pre>
 		<p>Permet d'annuler les modifications locales d'un fichier. Le fichier ne doit pas être dans la staging area (utilisez git reset pour l'en sortir). Le checkout annule les modifications et les suppressions.</p>
 	</section>
