@@ -29,7 +29,7 @@
 		déploiement d'applications.</p>
 		<p>Ansible permet de définir une liste de machines en les associant à des groupes. L'ensemble de ces groupes est appelé un inventaire
 		(<em>inventory</em>). Il est ensuite possible de réaliser des <em>tâches</em> sur un ou plusieurs groupes (et donc une ou plusieurs
-		machine) en faisant appel à des <em>modules</em>. Pour chaque module, Ansible établit une connexion SSH machine par machine
+		machines) en faisant appel à des <em>modules</em>. Pour chaque module, Ansible établit une connexion SSH machine par machine
 		et vérifie si des commandes doivent être exécutées selon l'état de la machine et, le cas échéant, les exécute.</p>
 		<p>Il est possible de regrouper un ensemble de tâches dans un <em><strong>playbook</strong></em> qui va définir l'état d'un groupe
 		de machines. Lorsqu'on exécute un <em>playbook</em>, Ansible ne va effectuer que les actions nécessaires pour rendre la machine
@@ -49,7 +49,7 @@ sudo pip install ansible
 			<h2>Création d'un inventaire</h2>
 			
 			<p>Un <a href="http://docs.ansible.com/ansible/intro_inventory.html">inventaire</a> (<em>inventory</em>) est un catalogue
-			des adresses machines (aussi appelées <em>nœuds</em> ou <em>hosts</em>) décrivant notre infrastructure.</p>
+			des noms ou adresses de machines (aussi appelées <em>nœuds</em> ou <em>hosts</em>) décrivant une infrastructure.</p>
 			<p>Par défaut, l'inventaire se trouve dans le fichier <code>/etc/ansible/hosts</code>. Il est également possible de préciser
 			à Ansible d'utiliser un inventaire particulier, ce qui évite de modifier le fichier système, notamment pour les phases de test.</p>
 			
@@ -108,7 +108,7 @@ sql
 				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
 
 				<dt>-C, --check</dt>
-				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realiser sur les machines.</dd>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realisées sur les machines.</dd>
 
 				<dt>-m &lt;nom du module&gt;</dt>
 				<dd>spécifie le module que l'on souhaite invoquer.</dd>
@@ -130,7 +130,7 @@ sql
 			</dl>
 			
 			<p>Vous pouvez par exemple tester votre inventaire en utilisant le module <code>ping</code> pour vous assurer que vous pouvez
-			joindre toutes les machines de votre inventaire</p>
+			joindre toutes les machines de votre inventaire&nbsp;:</p>
 			
 			<pre><code class="shell">
 ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
@@ -142,7 +142,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
 		<h2>Exercice&nbsp;: création d'un machine avec LXC</h2>
 		<dl>
 			<dt>Objectif</dt>
-			<dd>Avoir une machine de référence administrable avec Ansible</dd>
+			<dd>Disposer d'un conteneur LXC de référence administrable avec Ansible</dd>
 		</dl>
 		<p>Reprenez votre script de création de machine écrit lors du chapitre sur <a href="lxc.html">LXC</a> et
 		ajoutez les instructions nécessaires pour avoir une machine administrable avec Ansible.</p>
@@ -201,12 +201,12 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 			permettant de définir l'état d'une infrastructure de machines. Avec les playbooks, nous avons à notre disposition un outil qui nous permet de gérer
 			notre <a href="https://en.wikipedia.org/wiki/Infrastructure_as_Code">infrastructure comme du code</a>&nbsp;: c'est-à-dire que la gestion des machines se fait à partir de fichiers semblables à du code source applicatif. Il devient
 			donc possible d'utiliser des gestionnaires de source comme Git pour conserver, partager et versionner notre infrastructure mais également d'imaginer
-			des procédures automatisées de test et de déploiement non seulement des applicatifs mais également de machines.</p>
+			des procédures automatisées de test et de déploiement non seulement des applicatifs mais également des machines.</p>
 			
 			<p>Dans son sens le plus strict, un <strong>playbook</strong> est un fichier au format <a href="https://fr.wikipedia.org/wiki/YAML">YAML</a>.</p>
 			
 			<aside class="tip">
-				<p>Par convention, les fichiers YAML ont extension <em>yml</em>.</p>
+				<p>Par convention, les fichiers YAML ont pour extension <em>yml</em>.</p>
 			</aside>
 			
 			<figure>
@@ -226,7 +226,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 			
 			<dl>
 				<dt>hosts</dt>
-				<dd>Le nom de groupe de l'inventaire</dd>
+				<dd>Le nom de groupe de l'inventaire pour lequel s'applique le playbook</dd>
 				<dt>vars</dt>
 				<dd>Une liste de variables qui peuvent être utilisées dans le corps du playbook en utilisant la notation Jinja2 <code>{{ nom_variable }}</code></dd>
 				<dt>remote_user</dt>
@@ -238,14 +238,14 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 			</dl>
 			
 			<p>Dans les sections <code>tasks</code> et <code>handlers</code>, on trouve la déclaration des modules avec leurs arguments.
-			Pour chacun, on utilisera la notation&nbsp;:</p>
+			Pour chacun, on utilisera soit la notation&nbsp;:</p>
 			
 			<pre><code class="yaml">
   - name: &lt;description de la tâche&gt;
     &lt;module&gt;: &lt;arg1&gt;=&lt;valeur1&gt; &lt;arg2&gt;=&lt;valeur2&gt;...
 			</code></pre>
 
-			<p>...ou la notation plus longue&nbsp;:</p>
+			<p>... soit la notation plus longue&nbsp;:</p>
 			
 			<pre><code class="yaml">
   - name: &lt;description de la tâche&gt;
@@ -301,7 +301,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
 
 				<dt>-C, --check</dt>
-				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realiser sur les machines.</dd>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realisées sur les machines.</dd>
 
 				<dt>-k</dt>
 				<dd>demande le mot de passe pour la connexion SSH</dd>
@@ -338,7 +338,6 @@ ansible-playbook -i &lt;inventaire&gt; -k -K -b monplaybook.yml
 		<pre><code class="yaml">
 ---
 - hosts: web
-  remote_user: root
 
   handlers:
     - name : reload apache2 service
@@ -355,6 +354,28 @@ ansible-playbook -i &lt;inventaire&gt; -k -K -b monplaybook.yml
 		</code></pre>
 		
 		<p>Vérifier que le serveur HTTP est bien disponible.</p>
+		<p>Relancez le même playbook pour voir ce qu'il se passe...</p>
+	</article>
+
+	<article class="exercice">
+		<h2>Exercice&nbsp;: hébergement du cours</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>Utiliser <code>ansible-playbook</code> pour monter un serveur Web qui héberge ce cours.</dd>
+		</dl>
+		
+		<p>Une archive du site est téléchargeable à <a href="https://github.com/spoonless/epsi-b3-deploiement-continu/archive/gh-pages.zip">cette adresse</a>.
+		Mais ce site est également <a href="https://github.com/spoonless/epsi-b3-deploiement-continu/tree/gh-pages">un dépôt GitHub</a> sur la branche <strong>gh-pages</strong>.</p>
+		
+		
+		<aside class="tip">
+			<p>Pour cet exercice, vous aurez besoin de consulter <a href="http://docs.ansible.com/ansible/modules_by_category.html">la liste des modules Ansible</a>
+			pour sélectionner ceux qui vous permettront de réaliser les tâches nécessaires.</p>
+		</aside>
+
+		<p>Testez votre playbook avec un conteneur LXC</p>
+		<p>Sauvegardez votre projet dans un dépôt GitHub&nbsp;!</p>
+		
 	</article>
 
 	<footer class="license">
