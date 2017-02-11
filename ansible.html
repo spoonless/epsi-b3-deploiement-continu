@@ -39,7 +39,7 @@
 			<h2>Installation</h2>
 			<p>Ansible est écrit en Python. Si vous disposez du gestionnaire de paquets <code>pip</code> alors la façon la plus simple d'installer
 			Ansible est probablement&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 sudo pip install ansible
 			</code></pre>
 			<p>Pour les autres méthodes d'installation, vous pouvez vous reporter à la <a href="http://docs.ansible.com/ansible/intro_installation.html#getting-ansible">documentation</a>.</p>
@@ -132,7 +132,7 @@ sql
 			<p>Vous pouvez par exemple tester votre inventaire en utilisant le module <code>ping</code> pour vous assurer que vous pouvez
 			joindre toutes les machines de votre inventaire&nbsp;:</p>
 			
-			<pre><code class="shell">
+			<pre><code class="bash">
 ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
 			</code></pre>
 			
@@ -144,18 +144,35 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
 			<dt>Objectif</dt>
 			<dd>Disposer d'un conteneur LXC de référence administrable avec Ansible</dd>
 		</dl>
-		<p>Reprenez votre script de création de machine écrit lors du chapitre sur <a href="lxc.html">LXC</a> et
+		<p>Reprenez votre script de création de machine écrit lors du chapitre sur LXC et
 		ajoutez les instructions nécessaires pour avoir une machine administrable avec Ansible.</p>
-
-		<pre><code class="shell">
+		
+		<figure>
+			<figcaption>Commandes pour LXC/LXD</figcaption>
+			<pre><code class="bash">
 lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
 lxc exec &lt;nom du conteneur&gt; -- apt update
 lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
 lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
 lxc exec &lt;nom du conteneur&gt; -- adduser $USER
 lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
-		</code></pre>
+			</code></pre>
+		</figure>
+
 		
+		<figure>
+			<figcaption>Commandes pour LXC seul</figcaption>
+			<pre><code class="bash">
+sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d debian -r jessie -a amd64
+sudo lxc-start -n &lt;nom du conteneur&gt;
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt update
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y upgrade
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- adduser $USER
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
+			</code></pre>
+		</figure>
+
 		<aside class="tip">
 			<p>Il est fortement recommandé de faire un snapshot de l'état de ce conteneur et de travailler ensuite
 			sur des copies afin de conserver une machine de référence pour tous les exercices.</p>
@@ -174,7 +191,7 @@ lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
 		en mettant chaque machine dans un groupe différent (par exemple groupe1 et groupe2).</p>
 		<p>Exécutez ensuite <code>ansible</code>&nbsp;:</p>
 		
-		<pre><code class="shell">
+		<pre><code class="bash">
 ansible -k -i &lt;fichier inventaire&gt; groupe1 -m ping
 ansible -k -i &lt;fichier inventaire&gt; groupe2 -m ping
 ansible -k -i &lt;fichier inventaire&gt; all -m ping
@@ -184,7 +201,7 @@ ansible -k -i &lt;fichier inventaire&gt; all -m ping
 		
 		<figure>
 			<figcaption>Exemple d'utilisation du module raw pour exécuter la commande date</figcaption>
-			<pre><code class="shell">
+			<pre><code class="bash">
 ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 			</code></pre>
 		</figure>
@@ -318,7 +335,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw -a "date"
 			
 			<figure>
 				<figcaption>Exemple d'exécution d'un playbook</figcaption>
-				<pre><code class="shell">
+				<pre><code class="bash">
 ansible-playbook -i &lt;inventaire&gt; -k -K -b monplaybook.yml
 				</code></pre>
 			</figure>
