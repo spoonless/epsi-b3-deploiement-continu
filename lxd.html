@@ -46,11 +46,11 @@
 			<h2>Installation</h2>
 			<p>L'installation de LXD se fait à partir du gestionnaire de paquet de votre distribution Linux.
 			Pour une distribution basée sur Debian (Ubuntu, Mint...), il suffit de taper en ligne de commande:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 sudo apt install lxd
 			</code></pre>
 			<p>Vous devez ensuite configurer le service LXD avec la commande&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 sudo lxd init
 			</code></pre>
 			<p>Vous pouvez conserver la valeur des paramètres telle qu'elle vous est proposée.
@@ -60,7 +60,7 @@ sudo lxd init
 				<p>Par défaut, la commande <code>lxc</code> exige les droits de superutilisateur pour communiquer avec LXD.
 				Pour éviter de préfixer toutes vos commandes par <code>sudo</code>, il vous suffit d'ajouter votre compte
 				utilisateur au groupe <strong>lxd</strong> avec la commande suivante&nbsp;:</p>
-				<pre><code class="shell">
+				<pre><code class="bash">
 sudo usermod -a -G lxd <span class="name variable">$USER</span>
 				</code></pre>
 				<p>À la prochaine connexion à votre session utilisateur, votre compte appartiendra au groupe <strong>lxd</strong>
@@ -72,54 +72,60 @@ sudo usermod -a -G lxd <span class="name variable">$USER</span>
 			<h2>Utilisation</h2>
 			<p><code>lxc</code> permet de manipuler facilement vos conteneurs. Cette section liste les commandes les plus utiles.</p>
 			<p>Pour voir la liste des conteneurs installés, leur état et leurs adresses réseau&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc list
 			</code></pre>
 			<p>Pour créer un conteneur ;</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc launch images:&lt;distribution&gt;/&lt;release&gt;/&lt;architecture&gt; &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>La liste des images est disponible sur <a href="https://images.linuxcontainers.org/">https://images.linuxcontainers.org/</a>.</p>
 			<p>Pour créer un conteneur Debian jessie pour une architecture 64 bits&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour démarrer/arrêter/relancer un conteneur&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc start &lt;nom du conteneur&gt;
 lxc stop &lt;nom du conteneur&gt;
 lxc restart &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour obtenir des informations détaillées sur le conteneur&nbsp;:</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc info &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour lancer un shell en mode superutilisateur</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc shell &lt;nom du conteneur&gt;
 			</code></pre>
+			<aside class="tip">
+				<p>Il est possible que la commande <code>lxc shell</code> n'existe pas dans votre version de LXC. Dans ce cas, utilisez la commande&nbsp;:</p>
+				<pre><code class="bash">
+lxc exec &lt;nom du conteneur&gt; -- /bin/bash
+				</code></pre>
+			</aside>
 			<p>Pour exécuter une commande en mode superutilisateur</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc exec &lt;nom du conteneur&gt; -- &lt;commande&gt;
 			</code></pre>
 			<p>Pour supprimer un conteneur</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc delete &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour créer un snapshot de l'état d'un conteneur</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc snapshot &lt;nom du conteneur&gt; &lt;nom du snapshot&gt;
 			</code></pre>
 			<p>Pour restaurer un snapshot</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc restore &lt;nom du conteneur&gt; &lt;nom du snapshot&gt;
 			</code></pre>
 			<p>Pour copier un conteneur</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc copy &lt;nom du conteneur&gt; &lt;nom du nouveau conteneur&gt;
 			</code></pre>
 			<p>Pour copier un conteneur à partir d'un snapshot</p>
-			<pre><code class="shell">
+			<pre><code class="bash">
 lxc copy &lt;nom du conteneur&gt;/&lt;nom du snapshot&gt; &lt;nom du nouveau conteneur&gt;
 			</code></pre>
 		</section>
@@ -133,7 +139,7 @@ lxc copy &lt;nom du conteneur&gt;/&lt;nom du snapshot&gt; &lt;nom du nouveau con
 		</dl>
 
 		<p>Ce script permet de créer un conteneur Debian à jour avec un compte utilisateur accessible en ssh.</p>
-		<pre><code class="shell">
+		<pre><code class="bash">
 lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
 lxc exec &lt;nom du conteneur&gt; -- apt update
 lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
