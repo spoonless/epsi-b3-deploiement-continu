@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>LXC</title>
+	<title>LXC / LXD</title>
 	<meta name="author" content="David Gayerie">
 	<link href="css/article.css" rel="stylesheet" media="screen">
 	<link href="css/print-article.css" rel="stylesheet" media="print">
@@ -29,14 +29,13 @@
 		Les conteneurs partagent le même noyau mais l'utilisation des processeurs, mémoire vive, système de fichier... est isolée les uns des autres.
 		Il s'agit donc d'une méthode de virtualisation <i>légère</i> puisque la machine elle-même n'est pas virtualisée. On parle alors de conteneur plutôt que
 		de machine virtuelle.</p>
+		<p><a href="https://linuxcontainers.org/lxd/introduction/">LXD</a> est l'hyperviseur de LXC.</p>
 		<p>LXC va nous permettre de créer rapidement des machines afin de pouvoir les configurer. Il s'agit donc d'un outil particulièrement utile à la
 		fois pour le déploiement mais aussi les tests.</p>
-		
-		<aside class="tip">
-			<p>Si vous possédez une distribution récente, vous pouvez installer <a href="https://linuxcontainers.org/lxd/introduction/">LXD</a> qui est l'hyperviseur pour LXC.
-			Il offre un service centralisé pour la gestion de conteneurs et une simplification de l'utilisation des lignes de commande.</p>
-			<p>Si vous souhaitez utiliser LXD, reportez-vous <a href="lxd.html">au chapitre décrivant l'utilisation conjointe de LXC/LXD</a>. Si vous ne pouvez pas installer LXD ou s'il ne
-			fonctionne pas correctement, vous pourrez toujours revenir à ce chapitre.</p>
+
+		<aside class="warn">
+			<p>LXD nécessite une version à jour de votre distribution Linux. Il se peut que vous ne puissiez pas installer LXD ou qu'il ne fonctionne pas correctement.
+			Dans ce cas, vous devez utiliser LXC sans le support du superviseur LXD. Reportez-vous au <a href="lxc.html">chapitre décrivant l'utilisation de LXC seul</a>.</p>
 		</aside>
 
 		<aside class="info">
@@ -45,103 +44,83 @@
 
 		<section id="id1">
 			<h2>Installation</h2>
-			<p>L'installation de LXC se fait à partir du gestionnaire de paquet de votre distribution Linux.
+			<p>L'installation de LXD se fait à partir du gestionnaire de paquet de votre distribution Linux.
 			Pour une distribution basée sur Debian (Ubuntu, Mint...), il suffit de taper en ligne de commande:</p>
-			<pre><code class="bash">
-sudo apt install lxc
+			<pre><code class="shell">
+sudo apt install lxd
 			</code></pre>
+			<p>Vous devez ensuite configurer le service LXD avec la commande&nbsp;:</p>
+			<pre><code class="shell">
+sudo lxd init
+			</code></pre>
+			<p>Vous pouvez conserver la valeur des paramètres telle qu'elle vous est proposée.
+			LXD est maintenant installé en tant que service. Vous allez pouvoir utiliser la commande <code>lxc</code>
+			qui va vous permettre d'interagir avec l'hyperviseur.</p>
+			<aside>
+				<p>Par défaut, la commande <code>lxc</code> exige les droits de superutilisateur pour communiquer avec LXD.
+				Pour éviter de préfixer toutes vos commandes par <code>sudo</code>, il vous suffit d'ajouter votre compte
+				utilisateur au groupe <strong>lxd</strong> avec la commande suivante&nbsp;:</p>
+				<pre><code class="shell">
+sudo usermod -a -G lxd <span class="name variable">$USER</span>
+				</code></pre>
+				<p>À la prochaine connexion à votre session utilisateur, votre compte appartiendra au groupe <strong>lxd</strong>
+				et vous n'aurez plus besoin des droits superutilisateur pour exécuter la commande <code>lxc</code>.</p>
+			</aside>
 		</section>
 
 		<section id="utilisation">
 			<h2>Utilisation</h2>
 			<p><code>lxc</code> permet de manipuler facilement vos conteneurs. Cette section liste les commandes les plus utiles.</p>
-			
-			<aside class="warn">
-				<p>La commande <code>lxc</code> exige des droits privilégiés d'exécution. Vous devez utiliser la commande <code>sudo</code>
-				ou toute commande vous donnant les droits nécessaires.</p>
-			</aside>
-			
 			<p>Pour voir la liste des conteneurs installés, leur état et leurs adresses réseau&nbsp;:</p>
-			<pre><code class="bash">
-lxc-ls -f
+			<pre><code class="shell">
+lxc list
 			</code></pre>
 			<p>Pour créer un conteneur ;</p>
-			<pre><code class="bash">
-lxc-create --template download --name &lt;nom du conteneur&gt; -- &lt;paramètres de création du conteneur&gt;
+			<pre><code class="shell">
+lxc launch images:&lt;distribution&gt;/&lt;release&gt;/&lt;architecture&gt; &lt;nom du conteneur&gt;
 			</code></pre>
-			
-			<aside class="tip">
-				<p>Si vous ne passez pas de paramètres de création à la commande <code>lxc-create</code>, alors vous lancez le mode
-				interactif pour sélectionner l'image du système que vous souhaitez installer&nbsp;:</p>
-				<pre><code class="bash">
-lxc-create --template download --name &lt;nom du conteneur&gt;
-				</code></pre>
-			</aside>
+			<p>La liste des images est disponible sur <a href="https://images.linuxcontainers.org/">https://images.linuxcontainers.org/</a>.</p>
 			<p>Pour créer un conteneur Debian jessie pour une architecture 64 bits&nbsp;:</p>
-			<pre><code class="bash">
-lxc-create --template download --name &lt;nom du conteneur&gt; -- -d debian -r jessie -a amd64
+			<pre><code class="shell">
+lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
 			</code></pre>
-			
-			<aside class="warn">
-				<p>Si cette commande échoue, cela signifie que votre version de LXC est peut-être trop ancienne et que vous n'avez pas accès
-				à l'image de Debian jessie. Dans ce cas, essayez le mode intéractif comme décrit dans le cadre ci-dessus, pour connaître
-				la liste des images disponibles.</p>
-			</aside>
-			<p>Pour démarrer/arrêter un conteneur&nbsp;:</p>
-			<pre><code class="bash">
-lxc-start -n &lt;nom du conteneur&gt;
-lxc-stop -n &lt;nom du conteneur&gt;
+			<p>Pour démarrer/arrêter/relancer un conteneur&nbsp;:</p>
+			<pre><code class="shell">
+lxc start &lt;nom du conteneur&gt;
+lxc stop &lt;nom du conteneur&gt;
+lxc restart &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour obtenir des informations détaillées sur le conteneur&nbsp;:</p>
-			<pre><code class="bash">
-lxc-info -n &lt;nom du conteneur&gt;
+			<pre><code class="shell">
+lxc info &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour lancer un shell en mode superutilisateur</p>
-			<pre><code class="bash">
-lxc-attach -n &lt;nom du conteneur&gt; -- /bin/bash
+			<pre><code class="shell">
+lxc shell &lt;nom du conteneur&gt;
 			</code></pre>
 			<p>Pour exécuter une commande en mode superutilisateur</p>
-			<pre><code class="bash">
-lxc-attach -n &lt;nom du conteneur&gt; -- &lt;commande&gt;
+			<pre><code class="shell">
+lxc exec &lt;nom du conteneur&gt; -- &lt;commande&gt;
 			</code></pre>
 			<p>Pour supprimer un conteneur</p>
-			<pre><code class="bash">
-lxc-destroy -n &lt;nom du conteneur&gt;
+			<pre><code class="shell">
+lxc delete &lt;nom du conteneur&gt;
 			</code></pre>
-			<aside class="tip">
-				<p>Si votre conteneur contient des snapshots, vous devez forcer la suppression des snapshots avec l'option <code>-s</code>&nbsp;</p>
-				<pre><code class="bash">
-lxc-destroy -s -n &lt;nom du conteneur&gt;
-				</code></pre>
-			</aside>
 			<p>Pour créer un snapshot de l'état d'un conteneur</p>
-			<pre><code class="bash">
-lxc-snapshot -n &lt;nom du conteneur&gt;
-			</code></pre>
-			<p>Pour voir liste des snapshots disponible pour un conteneur</p>
-			<pre><code class="bash">
-lxc-snapshot -n &lt;nom du conteneur&gt; -L
+			<pre><code class="shell">
+lxc snapshot &lt;nom du conteneur&gt; &lt;nom du snapshot&gt;
 			</code></pre>
 			<p>Pour restaurer un snapshot</p>
-			<pre><code class="bash">
-lxc-snapshot -n &lt;nom du conteneur&gt; -r &lt;nom du snapshot&gt;
+			<pre><code class="shell">
+lxc restore &lt;nom du conteneur&gt; &lt;nom du snapshot&gt;
 			</code></pre>
 			<p>Pour copier un conteneur</p>
-			<pre><code class="bash">
-lxc-copy -n &lt;nom du conteneur&gt; -N &lt;nom du nouveau conteneur&gt;
+			<pre><code class="shell">
+lxc copy &lt;nom du conteneur&gt; &lt;nom du nouveau conteneur&gt;
 			</code></pre>
-			
-			<aside class="top">
-				<p>Si vous avez une ancienne version de LXC, vous n'aurez pas accès à <code>lxc-copy</code>.
-				Dans ce cas, essayez <code>lxc-clone</code>&nbsp;:</p>
-				<pre><code class="bash">
-lxc-clone &lt;nom du conteneur&gt; &lt;nom du nouveau conteneur&gt;
-				</code></pre>
-			</aside>
-			
 			<p>Pour copier un conteneur à partir d'un snapshot</p>
-			<pre><code class="bash">
-lxc-snapshot -n &lt;nom du conteneur&gt; -r &lt;nom du snapshot&gt; -N &lt;nom du nouveau conteneur&gt;
+			<pre><code class="shell">
+lxc copy &lt;nom du conteneur&gt;/&lt;nom du snapshot&gt; &lt;nom du nouveau conteneur&gt;
 			</code></pre>
 		</section>
 	</article>
@@ -154,13 +133,12 @@ lxc-snapshot -n &lt;nom du conteneur&gt; -r &lt;nom du snapshot&gt; -N &lt;nom d
 		</dl>
 
 		<p>Ce script permet de créer un conteneur Debian à jour avec un compte utilisateur accessible en ssh.</p>
-		<pre><code class="bash">
-sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d debian -r jessie -a amd64
-sudo lxc-start -n &lt;nom du conteneur&gt;
-sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt update
-sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y upgrade
-sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y install openssh-server
-sudo lxc-attach -n &lt;nom du conteneur&gt; -- adduser <span class="name variable">$USER</span>
+		<pre><code class="shell">
+lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
+lxc exec &lt;nom du conteneur&gt; -- apt update
+lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
+lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server
+lxc exec &lt;nom du conteneur&gt; -- adduser <span class="name variable">$USER</span>
 		</code></pre>
 		<aside class="tip">
 			<p>Le temps de création d'un conteneur peut être assez long notamment à cause des mises à jour nécessaires
