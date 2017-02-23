@@ -168,7 +168,6 @@ if [ $(lxc list -c n | grep -c "| *$CONTAINER_NAME *|") == 1 ]
 then
   echo "Un conteneur porte déja ce nom..."
 else
-  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d debian -r jessie -a amd64
   lxc launch images:debian/jessie/amd64 "$CONTAINER_NAME"
   sleep 5
 fi
