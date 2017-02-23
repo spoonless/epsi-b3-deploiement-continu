@@ -175,8 +175,9 @@ fi
 lxc exec "$CONTAINER_NAME" -- apt update
 sleep 5
 lxc exec "$CONTAINER_NAME" -- apt -y upgrade
-lxc exec "$CONTAINER_NAME" -- apt -y install openssh-server
+lxc exec "$CONTAINER_NAME" -- apt -y install openssh-server python sudo
 lxc exec "$CONTAINER_NAME" -- adduser $USER
+lxc exec "$CONTAINER_NAME" -- usermod -a -G sudo $USER
 
 			</code></pre>
 		</figure>

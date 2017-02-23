@@ -192,8 +192,9 @@ sleep 5
 sudo lxc-attach -n "$CONTAINER_NAME" -- apt update
 sleep 5
 sudo lxc-attach -n "$CONTAINER_NAME" -- apt -y upgrade
-sudo lxc-attach -n "$CONTAINER_NAME" -- apt -y install openssh-server
+sudo lxc-attach -n "$CONTAINER_NAME" -- apt -y install openssh-server python sudo
 sudo lxc-attach -n "$CONTAINER_NAME" -- adduser $USER
+sudo lxc-attach -n "$CONTAINER_NAME" -- usermod -a -G sudo $USER
 
 </code></pre>
 		</figure>
