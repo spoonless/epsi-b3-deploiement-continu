@@ -151,6 +151,36 @@ lxc exec &lt;nom du conteneur&gt; -- adduser <span class="name variable">$USER</
 			du système. Une astuce consiste à créer un image maître du système dont on fera une copie pour chaque
 			nouvelle machine. En effet, copier un conteneur ne prend que quelques secondes.</p>
 		</aside>
+		
+		<figure>
+			<figcaption>Exemple de script pour LXC</figcaption>
+			<pre><code class="bash">
+#!/bin/bash -e
+
+CONTAINER_NAME="$1"
+
+while [ -z "$CONTAINER_NAME" ]
+do
+  read -p "Donnez le nom du nouveau conteneur: " CONTAINER_NAME
+done
+
+if [ $(lxc list -c n | grep -c "| *$CONTAINER_NAME *|") == 1 ]
+then
+  echo "Un conteneur porte déja ce nom..."
+else
+  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d debian -r jessie -a amd64
+  lxc launch images:debian/jessie/amd64 "$CONTAINER_NAME"
+  sleep 5
+fi
+
+lxc exec "$CONTAINER_NAME" -- apt update
+sleep 5
+lxc exec "$CONTAINER_NAME" -- apt -y upgrade
+lxc exec "$CONTAINER_NAME" -- apt -y install openssh-server
+lxc exec "$CONTAINER_NAME" -- adduser $USER
+
+			</code></pre>
+		</figure>
 	</article>
 
 	<footer class="license">
