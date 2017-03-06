@@ -30,6 +30,43 @@
 		Une équipe de développement peut ainsi créer un <i>pipeline</i> automatisé de développement lui permettant de vérifier la qualité
 		de ce qui est produit au fur et à mesure des développements.
 		</p>
+		
+		<section>
+			<h2>Installation de Jenkins</h2>
+			
+			<p><a href="https://jenkins.io/index.html">Jenkins</a> est une application Web Java EE. Il peut donc être installé comme un simple fichier war.</p>
+			<aside>
+				<p>Il est également possible d'<a href="https://jenkins.io/doc/book/getting-started/installing/">installer Jenkins comme un serveur complet</a>.</p>
+			</aside>
+		</section>
+	</article>
+	
+	<article class="exercice">
+		<section>
+			<h2>Exercice&nbsp;: Installation dans un conteneur</h2>
+			<dl>
+				<dt>Objectif</dt>
+				<dd>Installer un serveur d'intégration complet dans un conteneur LXC</dd>
+			</dl>
+			<p>Vous devez récupérer les scripts permettant d'installer Jenkins depuis le projet <a href="https://github.com/spoonless/jenkins-server">GitHub</a>.</p>
+			<ul>
+				<li>Pour LXC, téléchargez les fichiers sur <a href="https://github.com/spoonless/jenkins-server/archive/lxc.zip">https://github.com/spoonless/jenkins-server/archive/lxc.zip</a></li>
+				<li>Pour LXC/LXD, téléchargez les fichiers sur <a href="https://github.com/spoonless/jenkins-server/archive/lxd.zip">https://github.com/spoonless/jenkins-server/archive/lxd.zip</a></li>
+			</ul>
+			
+			<p>Vous trouvez dans ces fichiers un <strong>playbook</strong> ansible complet pour l'installation de Tomcat / Jenkins / Git / JDK / Maven pour le groupe <strong>ci-server</strong></p>
+			<p>Les fichiers contiennent également trois scripts&nbsp;:</p>
+			<dl>
+				<dt>01_create_ubuntu.sh</dt>
+				<dd>crée un conteneur ubuntu yakkety pour une architecture 64 bits</dd>
+				<dt>02_run_playbook.sh</dt>
+				<dd>exécute le playbook complet permettant d'installer Jenkins qui sera disponible sur http://[@ip du conteneur]:8080</p>
+				<aside class="warn">Attention, vous devez renseigner le fichier <code>inventory.ini</code> qui définit l'inventaire de votre réseau.</aside></dd>
+				<dt>03_get_jenkins_admin_password.sh</dt>
+				<dd>permet de récupérer mot de passe administrateur d'installation. La première fois que vous allez vous connecter à Jenkins, 
+				vous aurez besoin de fournir un mot de passe présent sur la machine hôte.</dd>
+			</dl>
+		</section>
 	</article>
 
 	<footer class="license">
