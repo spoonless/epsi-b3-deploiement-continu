@@ -60,7 +60,7 @@
 				<dt>01_create_ubuntu.sh</dt>
 				<dd>crée un conteneur ubuntu yakkety pour une architecture 64 bits</dd>
 				<dt>02_run_playbook.sh</dt>
-				<dd>exécute le playbook complet permettant d'installer Jenkins qui sera disponible sur http://[@ip du conteneur]:8080</p>
+				<dd>exécute le playbook complet permettant d'installer Jenkins qui sera disponible sur http://[@ip du conteneur]:8080
 				<aside class="warn">Attention, vous devez renseigner le fichier <code>inventory.ini</code> qui définit l'inventaire de votre réseau.</aside></dd>
 				<dt>03_get_jenkins_admin_password.sh</dt>
 				<dd>permet de récupérer mot de passe administrateur d'installation. La première fois que vous allez vous connecter à Jenkins, 
@@ -79,7 +79,7 @@
 			<p>Créez un nouveau projet (cliquez sur <i>Nouveau Item</i> dans le menu en haut à gauche). Choisissez le type <strong>Construire un projet free-style</strong>.
 			Puis créez un projet dont le code source est géré par un dépôt Git distant.</p>
 			<p>Pour cette exercice vous pouvez par exemple vous servir du projet Maven <a href="https://github.com/spoonless/dbunit-annotations">dbunit-annotations</a>.</p>
-			<p>Il faut ensuite configurer le projet Jenkins pour invoquer des cibles Maven.</p>
+			<p>Il faut ensuite configurer le projet Jenkins pour invoquer les <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">cibles Maven</a> <strong><code>clean verify</code></strong></p>
 		</section>
 	</article>
 
@@ -90,6 +90,10 @@
 				<dt>Objectif</dt>
 				<dd>Personnaliser un projet Jenkins en ajoutant des indicateurs</dd>
 			</dl>
+			<ul>
+				<li>Configurez l'affichage des résultats des tests automatisés après chaque déclenchement du projet</li>
+				<li>Configurez l'envoi de notifications par email</li>
+			</ul>
 		</section>
 	</article>
 
