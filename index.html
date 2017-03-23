@@ -59,18 +59,18 @@
 			</p>
 			
 			<ul>
-				<li>Installer le JDK 8 (vous pouvez utiliser l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
+				<li>Installer le JDK 8 (vous pouvez le paquet <strong><code>openjdk-8-jdk-headless</code></strong> pour installer l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
 				<li>Créer un utilisateur système <code><strong>tomee</strong></code></li>
 				<li>Télécharger l'archive de TomEE et installer le serveur dans le répertoire <code><strong>/opt/tomee</strong></code> (ce répertoire doit être la propriété de l'utilisateur tomee)</li>
-				<li>Créer un fichier upstart pour gérer le service tomee</li>
-				<li>S'assurer que le service tomee est lancé</li>
+				<li>Créer un fichier unit systemd pour gérer le service tomee</li>
+				<li>S'assurer que le service tomee est lancé à chaque lancement du container</li>
 			</ul>
 			
 			<aside class="tip">
 				<p>TomEE est basé sur le conteneur de servlet Tomcat. Cela signifie que l'installation de TomEE est très proche d'une installation de Tomcat.
-				Il est très fortement recommandé de consulter <a href="https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-ubuntu-14-04">cet article</a>
-				qui détaille les étapes d'installation manuelle de Tomcat comme service sous Ubuntu. Vous pouvez vous en inspirer et les traduire en playbook ansible.
-				L'article contient notamment un exemple de fichier upstart pour l'installation d'un service.
+				Il est très fortement recommandé de consulter <a href="https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-ubuntu-16-04">cet article</a>
+				qui détaille les étapes d'installation manuelle de Tomcat comme service. Il contient notamment un exemple de fichier unit pour systemd. 
+				Vous pouvez vous en inspirer et traduire ces étapes en playbook ansible.
 				</p>
 			</aside>
 			
