@@ -52,14 +52,14 @@
 				</dd>
 			</dl>
 			<p>Le serveur TomEE est disponible à cette adresse&nbsp;: 
-				<a href="http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz">http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz</a></p>
+				<a href="http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz">http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz</a>
 			</p>
 			<p>Pour cet exercice, il va vous falloir installer TomEE comme un service dans un conteneur LXC. Pour cela vous allez devoir
 			écrire un playbook ansible pour&nbsp;:
 			</p>
 			
 			<ul>
-				<li>Installer le JDK 8 (vous pouvez le paquet <strong><code>openjdk-8-jdk-headless</code></strong> pour installer l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
+				<li>Installer le JDK 8 (en utilisant le paquet <strong><code>openjdk-8-jdk-headless</code></strong> pour installer l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
 				<li>Créer un utilisateur système <code><strong>tomee</strong></code></li>
 				<li>Télécharger l'archive de TomEE et installer le serveur dans le répertoire <code><strong>/opt/tomee</strong></code> (ce répertoire doit être la propriété de l'utilisateur tomee)</li>
 				<li>Créer un fichier unit systemd pour gérer le service tomee</li>
