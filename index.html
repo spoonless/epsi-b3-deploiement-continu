@@ -36,28 +36,27 @@
 			<li><a href="jenkins.html">Jenkins&nbsp;: le serveur d'intégration continue</a></li>
 		</ol>
 	</article>
-	
+
 	<article class="exercice note">
 		<section>
-			<h2>Projet à rendre&nbsp;: Installation de TomEE dans un conteneur</h2>
+			<h2>Projet à rendre &nbsp;: Installation de TomEE dans un conteneur</h2>
+			<strong>Projet à rendre pour le vendredi 19 mai</strong>
 			<dl>
 				<dt>Objectif</dt>
 				<dd>Installer un serveur d'application TomEE dans un conteneur LXC avec ansible.</dd>
-			</dl>
-			
-			<dl>
+
 				<dt>Mise en place</dt>
 				<dd>Utilisez le <a href="jenkins.html#exo_ansible">projet ansible</a> d'installation d'un serveur d'intégration continue et ajoutez
 				un groupe dans l'inventaire permettant d'installer le serveur d'application TomEE.
 				</dd>
 			</dl>
-			<p>Le serveur TomEE est disponible à cette adresse&nbsp;: 
+			<p>Le serveur TomEE est disponible à cette adresse&nbsp;:
 				<a href="http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz">http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz</a>
 			</p>
 			<p>Pour cet exercice, il va vous falloir installer TomEE comme un service dans un conteneur LXC. Pour cela vous allez devoir
 			écrire un playbook ansible pour&nbsp;:
 			</p>
-			
+
 			<ul>
 				<li>Installer le JDK 8 (en utilisant le paquet <strong><code>openjdk-8-jdk-headless</code></strong> pour installer l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
 				<li>Créer un utilisateur système <code><strong>tomee</strong></code></li>
@@ -65,20 +64,20 @@
 				<li>Créer un fichier unit systemd pour gérer le service tomee</li>
 				<li>S'assurer que le service tomee est lancé à chaque lancement du container</li>
 			</ul>
-			
+
 			<aside class="tip">
 				<p>TomEE est basé sur le conteneur de servlet Tomcat. Cela signifie que l'installation de TomEE est très proche d'une installation de Tomcat.
 				Il est très fortement recommandé de consulter <a href="https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-ubuntu-16-04">cet article</a>
-				qui détaille les étapes d'installation manuelle de Tomcat comme service. Il contient notamment un exemple de fichier unit pour systemd. 
+				qui détaille les étapes d'installation manuelle de Tomcat comme service. Il contient notamment un exemple de fichier unit pour systemd.
 				Vous pouvez vous en inspirer et traduire ces étapes en playbook ansible.
 				</p>
 			</aside>
-			
+
 
 			<dl>
 				<dt>Remise du projet</dt>
 				<dd>Le format attendu est l'URL de votre dépôt Git contenant le projet ansible.</dd>
-			</dl>			
+			</dl>
 		</section>
 	</article>
 
