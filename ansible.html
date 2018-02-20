@@ -37,20 +37,31 @@
 		
 		<section>
 			<h2>Installation</h2>
-			<p>Ansible est écrit en Python. Si vous disposez du gestionnaire de paquets <code>pip</code> alors la façon la plus simple d'installer
-			Ansible est probablement&nbsp;:</p>
+			<p>Ansible est écrit en Python et est disponible dans les dépôt Linux. Pour un système type Debian, vous pouvez utiliser <em>apt</em>&nbsp;:
 			<pre><code class="bash">
-sudo pip install ansible
+sudo apt install ansible
 			</code></pre>
-			<p>Pour les autres méthodes d'installation, vous pouvez vous reporter à la <a href="http://docs.ansible.com/ansible/intro_installation.html#getting-ansible">documentation</a>.</p>
 			
 			<aside>
 			  <p>Si vous utilisez un système Ubuntu, vous devez également installer le paquet <strong>sshpass</strong> pour pouvoir vous
 			  connecter aux machines virtuelles qui vous créerez dans votre système&nbsp;:</p>
-  			<pre><code class="bash">
+      			<pre><code class="bash">
 sudo apt install sshpass
-  			</code></pre>
+      			</code></pre>
 			</aside>
+
+			<p>Si vous avez l'habitude d'utiliser l'écosystème Python alors vous pouvez utiliser un environnement virtualisé Python 3 et
+			ensuite installer Ansible à partir du gestionnaire python <em>pip</em>&nbsp;:</p>
+			
+			<pre><code class="bash">
+virtualenv -p /usr/bin/python3 venv
+source venv/bin/activate
+pip install ansible
+			</code></pre>
+			
+			
+			 Pour plus d'informations sur l'installation, vous pouvez vous reporter à la <a href="http://docs.ansible.com/ansible/intro_installation.html">documentation</a>.</p>
+			
 		</section>
 		
 		<section>

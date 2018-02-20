@@ -38,10 +38,6 @@
 			Dans ce cas, vous devez utiliser LXC sans le support du superviseur LXD. Reportez-vous au <a href="lxc.html">chapitre décrivant l'utilisation de LXC seul</a>.</p>
 		</aside>
 
-		<aside class="info">
-			<p>Le gestionnaire de conteneurs d'application <a href="https://www.docker.com/">Docker</a> est basé sur LXC.</p>
-		</aside>
-
 		<section id="id1">
 			<h2>Installation</h2>
 			<p>L'installation de LXD se fait à partir du gestionnaire de paquet de votre distribution Linux.
@@ -132,15 +128,15 @@ lxc copy &lt;nom du conteneur&gt;/&lt;nom du snapshot&gt; &lt;nom du nouveau con
 	</article>
 
 	<article class="exercice" id="exercice">
-		<h2>Exercice&nbsp;: création d'un conteneur Debian</h2>
+		<h2>Exercice&nbsp;: création d'un conteneur Ubuntu</h2>
 		<dl>
 			<dt>Objectif</dt>
-			<dd>Écrire un script shell qui permet de créer un conteneur Debian jessie.</dd>
+			<dd>Écrire un script shell qui permet de créer un conteneur Ubuntu Xenial.</dd>
 		</dl>
 
 		<p>Ce script permet de créer un conteneur Debian à jour avec un compte utilisateur accessible en ssh.</p>
 		<pre><code class="bash">
-lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
+lxc launch images:ubuntu/xenial/amd64 &lt;nom du conteneur&gt;
 lxc exec &lt;nom du conteneur&gt; -- apt update
 lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
 lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server
@@ -168,7 +164,7 @@ if [ $(lxc list -c n | grep -c "| *$CONTAINER_NAME *|") == 1 ]
 then
   echo "Un conteneur porte déja ce nom..."
 else
-  lxc launch images:debian/jessie/amd64 "$CONTAINER_NAME"
+  lxc launch images:ubuntu/xenial/amd64 "$CONTAINER_NAME"
   sleep 5
 fi
 

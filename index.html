@@ -28,107 +28,13 @@
 		<ol>
 			<li>Les outils
 				<ul>
-					<li><a href="git.html">Git</a></li>
 					<li><a href="lxd.html">LXC/LXD</a> (ou simplement <a href="lxc.html">LXC</a> si votre distribution ne supporte pas LXD)</li>
 					<li><a href="ansible.html">Ansible</a></li>
+					<li><a href="git.html">Git</a></li>
 				</ul>
 			</li>
 			<li><a href="jenkins.html">Jenkins&nbsp;: le serveur d'intégration continue</a></li>
 		</ol>
-	</article>
-
-	<article class="exercice note">
-		<section>
-			<h2>Projet à rendre &nbsp;: Installation de TomEE dans un conteneur</h2>
-			<strong>Projet à rendre pour le vendredi 19 mai</strong>
-			<dl>
-				<dt>Objectif</dt>
-				<dd>Installer un serveur d'application TomEE dans un conteneur LXC avec ansible.</dd>
-
-				<dt>Mise en place</dt>
-				<dd>Utilisez le <a href="jenkins.html#exo_ansible">projet ansible</a> d'installation d'un serveur d'intégration continue et ajoutez
-				un groupe dans l'inventaire permettant d'installer le serveur d'application TomEE.
-				</dd>
-			</dl>
-			<p>Le serveur TomEE est disponible à cette adresse&nbsp;:
-				<a href="http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz">http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz</a>
-			</p>
-			<p>Pour cet exercice, il va vous falloir installer TomEE comme un service dans un conteneur LXC. Pour cela vous allez devoir
-			écrire un playbook ansible pour&nbsp;:
-			</p>
-
-			<ul>
-				<li>Installer le JDK 8 (en utilisant le paquet <strong><code>openjdk-8-jdk-headless</code></strong> pour installer l'Open JDK présent dans les dépôts de la distribution du conteneur)</li>
-				<li>Créer un utilisateur système <code><strong>tomee</strong></code></li>
-				<li>Télécharger l'archive de TomEE et installer le serveur dans le répertoire <code><strong>/opt/tomee</strong></code> (ce répertoire doit être la propriété de l'utilisateur tomee)</li>
-				<li>Créer un fichier unit systemd pour gérer le service tomee</li>
-				<li>S'assurer que le service tomee est lancé à chaque lancement du container</li>
-			</ul>
-
-			<aside class="tip">
-				<p>TomEE est basé sur le conteneur de servlet Tomcat. Cela signifie que l'installation de TomEE est très proche d'une installation de Tomcat.
-				Il est très fortement recommandé de consulter <a href="https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-ubuntu-16-04">cet article</a>
-				qui détaille les étapes d'installation manuelle de Tomcat comme service. Il contient notamment un exemple de fichier unit pour systemd.
-				Vous pouvez vous en inspirer et traduire ces étapes en playbook ansible.
-				</p>
-			</aside>
-
-
-			<dl>
-				<dt>Remise du projet</dt>
-				<dd>Le format attendu est l'URL de votre dépôt Git contenant le projet ansible.</dd>
-			</dl>
-		</section>
-	</article>
-
-	<article class="exercice note">
-		<section>
-			<h2>Projet à rendre &nbsp;: Intégration continue d'un projet Java EE</h2>
-			<dl>
-				<dt>Objectif</dt>
-				<dd>Initier un environnement d'intégration continue pour un projet Maven JavaEE.
-				Le projet doit pouvoir être ajouté comme job dans Jenkins. Si le build se passe correctement,
-				alors l'application doit être déployée dans un serveur TomEE.</dd>
-
-				<dt>Ajout du plugin cargo</dt>
-				<dd>Pour un projet géré par Maven, il est possible de configurer le plugin <code>cargo</code> qui permet de gérer
-				les intéractions avec un serveur d'application. Le plugin <code>cargo</code> permet notamment de redéployer
-				un WAR. Pour cela, il va falloir modifier le fichier <code>pom.xml</code> du projet pour déclarer le plugin
-				<code>cargo</code> et configurer un accès à un serveur <strong>tomee7x</strong> en donnant les informations
-				de connection (adresse, port, login, mot de passe) pour faire un déploiement distant.</dd>
-				
-				<dt>Configuration de l'application de déploiement pour TomEE</dt>
-				<dd>TomEE étant basé sur Tomcat, il utilise le système de déploiement à distance pour une application fourni par Tomcat.
-				Ce service est lui-même une application Web appelée <strong>manager</strong> et qui est déployée dans le serveur d'application.
-				Pour des raisons de sécurité, cette application n'est accessible par défaut que depuis la machine qui héberge le serveur
-				d'application (localhost) et il n'existe pas de couple login/mot de passe autorisé à accéder à cette application.
-				Il faut donc reconfigurer l'application <strong>manager</strong> sur TomEE pour autoriser l'accès distant
-				et créer un compte utilisateur pouvant administrer le déploiement d'application.
-				<p>Puisque nous possédons des scripts Ansible permettant de gérer notre plate-forme d'intégration continue.
-				Il va falloir faire évoluer ces scripts afin de mettre à jour le serveur TomEE en conséquence.</p>
-				</dd>
-				
-				<dt>Ajout du job dans Jenkins</dt>
-				<dd>Il faut ajouter manuellement un nouveau job dans Jenkins permettant de récupérer les sources depuis un
-				dépôt Git et de lancer les tâches maven suivantes&nbsp;:
-					<pre><code>clean package cargo:redeploy</code></pre>				
-				</dd>
-
-				<dt>Mise en place</dt>
-				<dd>Utilisez le projet Ansible qui vous avez réalisé pour la mise en place des serveurs Jenkins et Tomee.
-				Utilisez un des projets Java EE réalisés comme projet suivi par Jenkins. Si votre projet requière une base de données, pensez
-				à faire installer le SGBDR par Ansible (par exemple sur la même machine que TomEE)</dd>
-			</dl>
-			
-			<aside class="info">
-				<p>Quelques liens utiles&nbsp;:</p>
-				<ul>
-					<li><a href="https://codehaus-cargo.github.io/cargo/Deploying+to+a+running+container.html">Documentation du plugin Maven cargo</a></li>
-					<li><a href="http://callistaenterprise.se/blogg/teknik/2012/03/12/remote-deploy-to-tomcat-7-using-cargo/">Un exemple de configuration du plugin cargo pour Tomcat7</a> (attention, l'exemple est peut-être un peu compliqué mais il est complet)</li>
-					<li><a href="https://tomcat.apache.org/tomcat-8.5-doc/manager-howto.html">Documentation de l'application <strong>manager</strong> de Tomcat</a></li>
-				</ul>
-			</aside>
-		</section>
 	</article>
 
 	<footer class="license">

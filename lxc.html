@@ -39,10 +39,6 @@
 			fonctionne pas correctement, vous pourrez toujours revenir à ce chapitre.</p>
 		</aside>
 
-		<aside class="info">
-			<p>Le gestionnaire de conteneurs d'application <a href="https://www.docker.com/">Docker</a> est basé sur LXC.</p>
-		</aside>
-
 		<section id="id1">
 			<h2>Installation</h2>
 			<p>L'installation de LXC se fait à partir du gestionnaire de paquet de votre distribution Linux.
@@ -159,12 +155,12 @@ lxc-snapshot -n &lt;nom du conteneur&gt; -r &lt;nom du snapshot&gt; -N &lt;nom d
 		<h2>Exercice&nbsp;: création d'un conteneur Debian</h2>
 		<dl>
 			<dt>Objectif</dt>
-			<dd>Écrire un script shell qui permet de créer un conteneur Debian jessie.</dd>
+			<dd>Écrire un script shell qui permet de créer un conteneur Ubuntu Xenial.</dd>
 		</dl>
 
 		<p>Ce script permet de créer un conteneur Debian à jour avec un compte utilisateur accessible en ssh.</p>
 		<pre><code class="bash">
-sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d debian -r jessie -a amd64
+sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d ubuntu -r xenial -a amd64
 sudo lxc-start -n &lt;nom du conteneur&gt;
 sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt update
 sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y upgrade
@@ -193,7 +189,7 @@ if [ $(sudo lxc-ls -1 | grep -c "^$CONTAINER_NAME$") == 1 ]
 then
   echo "Un conteneur porte déja ce nom..."
 else
-  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d debian -r jessie -a amd64
+  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d ubuntu -r xenial -a amd64
 fi
 
 sudo lxc-start -n "$CONTAINER_NAME"
