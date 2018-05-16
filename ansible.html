@@ -169,7 +169,7 @@ ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
 		<figure>
 			<figcaption>Commandes pour LXC/LXD</figcaption>
 			<pre><code class="bash">
-lxc launch images:debian/jessie/amd64 &lt;nom du conteneur&gt;
+lxc launch images:ubuntu/xenial/amd64 &lt;nom du conteneur&gt;
 lxc exec &lt;nom du conteneur&gt; -- apt update
 lxc exec &lt;nom du conteneur&gt; -- apt -y upgrade
 lxc exec &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
@@ -182,7 +182,7 @@ lxc exec &lt;nom du conteneur&gt; -- usermod -a -G sudo $USER
 		<figure>
 			<figcaption>Commandes pour LXC seul</figcaption>
 			<pre><code class="bash">
-sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d debian -r jessie -a amd64
+sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- -d ubuntu -r xenial -a amd64
 sudo lxc-start -n &lt;nom du conteneur&gt;
 sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt update
 sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y upgrade
