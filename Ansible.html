@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html -->
+<html><script type="text/javascript">window["_gaUserPrefs"] = { ioo : function() { return true; } }</script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<title>Ansible</title>
+	<meta name="author" content="David Gayerie">
+	<style data-tippy-stylesheet="">.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box{position:relative;background-color:#333;color:#fff;border-radius:4px;font-size:14px;line-height:1.4;outline:0;transition-property:transform,visibility,opacity}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{bottom:-7px;left:0;border-width:8px 8px 0;border-top-color:initial;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{top:-7px;left:0;border-width:0 8px 8px;border-bottom-color:initial;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{left:-7px;border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:center right}.tippy-box[data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-arrow{width:16px;height:16px;color:#333}.tippy-arrow:before{content:"";position:absolute;border-color:transparent;border-style:solid}.tippy-content{position:relative;padding:5px 9px;z-index:1}</style><link href="./Ansible_files/article.css" rel="stylesheet" media="screen">
+	<link href="./Ansible_files/print-article.css" rel="stylesheet" media="print">
+	<link href="./Ansible_files/zenburn.css" rel="stylesheet">
+	
+	<script src="./Ansible_files/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	<script src="./Ansible_files/toc.js"></script>
+</head>
+<body>
+	<div id="titleBar">
+		<a href="https://gayerie.dev/epsi-b3-deploiement-continu/index.html" title="Retourner au sommaire"><img src="./Ansible_files/go-home.png"></a>
+ 		<a href="https://github.com/spoonless/epsi-b3-deploiement-continu/archive/gh-pages.zip" title="Télécharger tout le cours"><img src="./Ansible_files/download.png"></a>
+		<script>document.write(document.title)</script>Ansible - EPSI B3 2016/2017 - <a href="mailto:david.gayerie.epsi@mailoo.org">David Gayerie</a>
+		<span class="license"><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/"><img alt="Licence Creative Commons" style="border-width:0" src="./Ansible_files/80x15.png"></a></span>
+	</div>
+
+	<header></header>
+	<article>
+		<h1><script>document.write(document.title)</script>Ansible</h1>
+		<section id="toc"><ol><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t0">Installation</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t1">Création d'un inventaire</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t2">Exécution de Ansible</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t3">Exercice&nbsp;: création d'un machine avec LXC</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t4">Exercice&nbsp;: première utilisation d'Ansible</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t5">Écriture de playbooks</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t6">Exécution d'un playbook</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t7">Exercice&nbsp;: premier playbook</a></li><li><a href="https://gayerie.dev/epsi-b3-deploiement-continu/ansible.html#t8">Exercice&nbsp;: hébergement du cours</a></li></ol></section>
+		
+		<p><a href="http://docs.ansible.com/ansible/index.html">Ansible</a> est un outil d'automatisation pour la maintenance de systèmes et le
+		déploiement d'applications.</p>
+		<p>Ansible permet de définir une liste de machines en les associant à des groupes. L'ensemble de ces groupes est appelé un inventaire
+		(<em>inventory</em>). Il est ensuite possible de réaliser des <em>tâches</em> sur un ou plusieurs groupes (et donc une ou plusieurs
+		machines) en faisant appel à des <em>modules</em>. Pour chaque module, Ansible établit une connexion SSH machine par machine
+		et vérifie si des commandes doivent être exécutées selon l'état de la machine et, le cas échéant, les exécute.</p>
+		<p>Il est possible de regrouper un ensemble de tâches dans un <em><strong>playbook</strong></em> qui va définir l'état d'un groupe
+		de machines. Lorsqu'on exécute un <em>playbook</em>, Ansible ne va effectuer que les actions nécessaires pour rendre la machine
+		conforme au <em>playbook</em>.</p>
+		
+		<section>
+			<h2 id="t0">Installation</h2>
+			<p>Ansible est écrit en Python et est disponible dans les dépôt Linux. Pour un système type Debian, vous pouvez utiliser <em>apt</em>&nbsp;:
+			</p><pre><code class="bash hljs">
+sudo apt install ansible
+			</code></pre>
+			
+			<aside>
+			  <p>Si vous utilisez un système Ubuntu, vous devez également installer le paquet <strong>sshpass</strong> pour pouvoir vous
+			  connecter aux machines virtuelles qui vous créerez dans votre système&nbsp;:</p>
+      			<pre><code class="bash hljs">
+sudo apt install sshpass
+      			</code></pre>
+			</aside>
+
+			<p>Si vous avez l'habitude d'utiliser l'écosystème Python alors vous pouvez utiliser un environnement virtualisé Python 3 et
+			ensuite installer Ansible à partir du gestionnaire python <em>pip</em>&nbsp;:</p>
+			
+			<pre><code class="bash hljs">
+virtualenv -p /usr/bin/python3 venv
+<span class="hljs-built_in">source</span> venv/bin/activate
+pip install ansible
+			</code></pre>
+			
+			
+			 Pour plus d'informations sur l'installation, vous pouvez vous reporter à la <a href="http://docs.ansible.com/ansible/intro_installation.html">documentation</a>.<p></p>
+			
+		</section>
+		
+		<section>
+			<h2 id="t1">Création d'un inventaire</h2>
+			
+			<p>Un <a href="http://docs.ansible.com/ansible/intro_inventory.html">inventaire</a> (<em>inventory</em>) est un catalogue
+			des noms ou adresses de machines (aussi appelées <em>nœuds</em> ou <em>hosts</em>) décrivant une infrastructure.</p>
+			<p>Par défaut, l'inventaire se trouve dans le fichier <code>/etc/ansible/hosts</code>. Il est également possible de préciser
+			à Ansible d'utiliser un inventaire particulier, ce qui évite de modifier le fichier système, notamment pour les phases de test.</p>
+			
+			<p>Le fichier d'inventaire suit le format de fichier <code>INI</code>&nbsp;:</p>
+			
+			<figure>
+				<figcaption>Format général d'un inventaire</figcaption>
+				<pre><code class="hljs css">
+<span class="hljs-selector-attr">[NOM_GROUPE]</span>
+<span class="hljs-selector-tag">ma-machine</span>
+<span class="hljs-selector-tag">ma-machine2</span>
+
+<span class="hljs-selector-attr">[NOM_GROUPE2]</span>
+<span class="hljs-selector-tag">autre-machine</span>
+<span class="hljs-selector-tag">autre-machine2</span>
+				</code></pre>
+			</figure>
+			
+			<p>Il est possible de définir un groupe comme étant un ensemble d'autres groupes grâce à la syntaxe <code>[NOM_GROUPE:children]</code>.
+			Ce groupe ne contient alors que des noms d'autres groupes de l'inventaire.</p>
+			<p>Si les machines sont numérotées, vous pouvez utiliser une syntaxe abrégée de la forme <code>racine&lt;01&gt;:&lt;09&gt;</code>
+			pour eviter de lister une machine par ligne.</p>
+
+			<figure>
+				<figcaption>Exemple d'un inventaire</figcaption>
+				<pre><code class="hljs css">
+<span class="hljs-selector-attr">[web]</span>
+<span class="hljs-selector-tag">web01</span><span class="hljs-selector-pseudo">:04</span>
+<span class="hljs-selector-tag">dmz</span><span class="hljs-selector-class">.web01</span><span class="hljs-selector-pseudo">:05</span>
+
+<span class="hljs-selector-attr">[sql]</span>
+<span class="hljs-selector-tag">mysql01</span><span class="hljs-selector-pseudo">:02</span>
+
+<span class="hljs-selector-attr">[supervisor]</span>
+192<span class="hljs-selector-class">.10</span><span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.32</span>
+
+<span class="hljs-selector-attr">[backup:children]</span>
+<span class="hljs-selector-tag">web</span>
+<span class="hljs-selector-tag">sql</span>
+				</code></pre>
+			</figure>
+			<p>Il existe un groupe implicite&nbsp;: <em>all</em>. Ce groupe désigne l'ensemble des machines décrites dans l'inventaire.</p>
+			<p>Les machines présentes dans l'inventaire doivent être administrables par Ansible. Pour cela, il faut que chaque machine
+			soit accessible <i>via</i> SSH et qu'une version de Python &gt;=2.7 y soit installée. De plus, pour administrer correctement
+			la machine, il est probablement nécessaire que le compte utilisateur pour la connexion SSH puisse obtenir des privilèges
+			d'exécution (par exemple avec la commande <code>sudo</code>).</p>
+		</section>
+		
+		<section>
+			<h2 id="t2">Exécution de Ansible</h2>
+			
+			<p>Vous pouvez exécuter <code>ansible</code> avec les paramètres suivants&nbsp;:</p>
+			
+			<dl>
+				<dt>-i &lt;fichier inventaire&gt;</dt>
+				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
+
+				<dt>-C, --check</dt>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realisées sur les machines.</dd>
+
+				<dt>-m &lt;nom du module&gt;</dt>
+				<dd>spécifie le module que l'on souhaite invoquer.</dd>
+
+				<dt>-a &lt;arguments&gt;</dt>
+				<dd>spécifie les arguments à passer au module au moment de l'exécution.</dd>
+
+				<dt>-k</dt>
+				<dd>demande le mot de passe pour la connexion SSH</dd>
+
+				<dt>-u &lt;utilisateur&gt;</dt>
+				<dd>spécifie le login utilisateur pour la connexion SSH</dd>
+
+				<dt>-b, --become</dt>
+				<dd>exécute les commandes distantes en tant que superutilisateur</dd>
+
+				<dt>-K</dt>
+				<dd>demande le mot de passe pour les opérations demandant des privilèges (principalement lors de l'exécution d'une commande <code>sudo</code> sur la machine distante)</dd>
+			</dl>
+			
+			<p>Vous pouvez par exemple tester votre inventaire en utilisant le module <code>ping</code> pour vous assurer que vous pouvez
+			joindre toutes les machines de votre inventaire&nbsp;:</p>
+			
+			<pre><code class="bash hljs">
+ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m ping
+			</code></pre>
+			
+		</section>
+	</article>
+	<article class="exercice">
+		<h2 id="t3">Exercice&nbsp;: création d'un machine avec LXC</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>Disposer d'un conteneur LXC de référence administrable avec Ansible</dd>
+		</dl>
+		<p>Reprenez votre script de création de machine écrit lors du chapitre sur LXC et
+		ajoutez les instructions nécessaires pour avoir une machine administrable avec Ansible.</p>
+		
+		<figure>
+			<figcaption>Commandes pour LXC/LXD</figcaption>
+			<pre><code class="bash hljs">
+lxc launch images:ubuntu/xenial/amd64 &lt;nom du conteneur&gt;
+lxc <span class="hljs-built_in">exec</span> &lt;nom du conteneur&gt; -- apt update
+lxc <span class="hljs-built_in">exec</span> &lt;nom du conteneur&gt; -- apt -y upgrade
+lxc <span class="hljs-built_in">exec</span> &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
+lxc <span class="hljs-built_in">exec</span> &lt;nom du conteneur&gt; -- adduser <span class="hljs-variable">$USER</span>
+lxc <span class="hljs-built_in">exec</span> &lt;nom du conteneur&gt; -- usermod <span class="hljs-_">-a</span> -G sudo <span class="hljs-variable">$USER</span>
+			</code></pre>
+		</figure>
+
+		
+		<figure>
+			<figcaption>Commandes pour LXC seul</figcaption>
+			<pre><code class="bash hljs">
+sudo lxc-create --template download --name &lt;nom du conteneur&gt; -- <span class="hljs-_">-d</span> ubuntu -r xenial <span class="hljs-_">-a</span> amd64
+sudo lxc-start -n &lt;nom du conteneur&gt;
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt update
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y upgrade
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- apt -y install openssh-server sudo python
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- adduser <span class="hljs-variable">$USER</span>
+sudo lxc-attach -n &lt;nom du conteneur&gt; -- usermod <span class="hljs-_">-a</span> -G sudo <span class="hljs-variable">$USER</span>
+			</code></pre>
+		</figure>
+
+		<aside class="tip">
+			<p>Il est fortement recommandé de faire un snapshot de l'état de ce conteneur et de travailler ensuite
+			sur des copies afin de conserver une machine de référence pour tous les exercices.</p>
+		</aside>
+
+	</article>
+
+	<article class="exercice">
+		<h2 id="t4">Exercice&nbsp;: première utilisation d'Ansible</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>comprendre le fonctionnement d'Ansible</dd>
+		</dl>
+		
+		<p>Créez deux conteneurs à partir de celui créé à l'exercice précédent. Créez un inventaire Ansible
+		en mettant chaque machine dans un groupe différent (par exemple groupe1 et groupe2).</p>
+		<p>Exécutez ensuite <code>ansible</code>&nbsp;:</p>
+		
+		<pre><code class="bash hljs">
+ansible -k -i &lt;fichier inventaire&gt; groupe1 -m ping
+ansible -k -i &lt;fichier inventaire&gt; groupe2 -m ping
+ansible -k -i &lt;fichier inventaire&gt; all -m ping
+		</code></pre>
+		
+		<p>Essayez ensuite d'utiliser le module <code>raw</code> qui permet d'exécuter n'importe quelle commande sur les machines distantes&nbsp;:</p>
+		
+		<figure>
+			<figcaption>Exemple d'utilisation du module raw pour exécuter la commande date</figcaption>
+			<pre><code class="bash hljs">
+ansible -k -i &lt;fichier inventaire&gt; &lt;groupe&gt; -m raw <span class="hljs-_">-a</span> <span class="hljs-string">"date"</span>
+			</code></pre>
+		</figure>
+		
+		<p>Utilisez le module <code>raw</code> pour exécuter des commandes nécessitant des privilèges comme <code>apt update</code>.</p>
+
+	</article>
+	
+	<article>
+		<section>
+			<h2 id="t5">Écriture de playbooks</h2>
+			
+			<p>Un <a href="http://docs.ansible.com/ansible/playbooks.html"><strong>playbook</strong></a> est à la fois un format de fichier et une arborescence de fichiers
+			permettant de définir l'état d'une infrastructure de machines. Avec les playbooks, nous avons à notre disposition un outil qui nous permet de gérer
+			notre <a href="https://en.wikipedia.org/wiki/Infrastructure_as_Code">infrastructure comme du code</a>&nbsp;: c'est-à-dire que la gestion des machines se fait à partir de fichiers semblables à du code source applicatif. Il devient
+			donc possible d'utiliser des gestionnaires de source comme Git pour conserver, partager et versionner notre infrastructure mais également d'imaginer
+			des procédures automatisées de test et de déploiement non seulement des applicatifs mais également des machines.</p>
+			
+			<p>Dans son sens le plus strict, un <strong>playbook</strong> est un fichier au format <a href="https://fr.wikipedia.org/wiki/YAML">YAML</a>.</p>
+			
+			<aside class="tip">
+				<p>Par convention, les fichiers YAML ont pour extension <em>yml</em>.</p>
+			</aside>
+			
+			<figure>
+				<figcaption>Exemple de fichier playbook</figcaption>
+				<pre><code class="yaml hljs">
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">- hosts:</span> web
+
+<span class="hljs-attr">  tasks:</span>
+<span class="hljs-attr">    - name:</span> checks apache2 is present
+<span class="hljs-attr">      package:</span> name=apache2 state=present
+
+				</code></pre>
+			</figure>
+			
+			<p>Un fichier playbook peut possèder les sections suivantes&nbsp;:</p>
+			
+			<dl>
+				<dt>hosts</dt>
+				<dd>Le nom de groupe de l'inventaire pour lequel s'applique le playbook</dd>
+				<dt>vars</dt>
+				<dd>Une liste de variables qui peuvent être utilisées dans le corps du playbook en utilisant la notation Jinja2 <code>{{ nom_variable }}</code></dd>
+				<dt>remote_user</dt>
+				<dd>Le login de l'utilisateur distant utilisé pour réaliser les tâches</dd>
+				<dt>tasks</dt>
+				<dd>La liste des tâches à réaliser si nécessaire</dd>
+				<dt>handlers</dt>
+				<dd>La liste des actions qui pourront être exécutées lors d'une notification</dd>
+			</dl>
+			
+			<p>Dans les sections <code>tasks</code> et <code>handlers</code>, on trouve la déclaration des modules avec leurs arguments.
+			Pour chacun, on utilisera soit la notation&nbsp;:</p>
+			
+			<pre><code class="yaml hljs">
+<span class="hljs-attr">  - name:</span> &lt;description de la tâche<span class="hljs-string">&gt;
+    &lt;module&gt;: &lt;arg1&gt;=&lt;valeur1&gt; &lt;arg2&gt;=&lt;valeur2&gt;...
+			</span></code></pre>
+
+			<p>... soit la notation plus longue&nbsp;:</p>
+			
+			<pre><code class="yaml hljs">
+<span class="hljs-attr">  - name:</span> &lt;description de la tâche<span class="hljs-string">&gt;
+    &lt;module&gt;: 
+      &lt;arg1&gt;: &lt;valeur1&gt;
+      &lt;arg2&gt;: &lt;valeur2&gt;
+      ...
+			</span></code></pre>
+			
+			<aside>
+				<p>Il existe de nombreux modules disponibles pour Ansible. Vous pouvez consulter la liste dans la <a href="http://docs.ansible.com/ansible/modules_by_category.html">documentation officielle</a>.</p>
+			</aside>
+			
+			<p>Les <code>handlers</code> permettent de définir des modules qui ne seront appelés que si certaines tâches sont exécutées.
+			On ajoute l'attibut <code>notify</code> à une tâche pour indiquer que si la tâche est exécutée alors le handler doit aussi l'être
+			</p>
+			
+			<figure>
+				<figcaption>Exemple d'utilisation d'un handler</figcaption>
+				<pre><code class="yaml hljs">
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">- hosts:</span> web
+<span class="hljs-attr">  remote_user:</span> root
+
+<span class="hljs-attr">  handlers:</span>
+<span class="hljs-bullet">    -</span> name : reload apache2 service
+<span class="hljs-attr">      service:</span> name=apache2 state=reloaded enabled=<span class="hljs-literal">yes</span>
+
+<span class="hljs-attr">  tasks:</span>
+<span class="hljs-attr">    - name:</span> checks apache2 is present
+<span class="hljs-attr">      package:</span> name=apache2 state=present
+
+<span class="hljs-attr">    - name:</span> checks apache2 modules enabled
+<span class="hljs-attr">      apache2_module:</span> name=ssl state=present
+<span class="hljs-attr">      notify:</span>
+<span class="hljs-bullet">        -</span> reload apache2 service
+				</code></pre>
+			</figure>
+			
+			<p>L'exemple ci-dessus vérifie que le serveur Web Apache est installé et que le module ssl est activé pour ce serveur.
+			Si ce n'est pas le cas, alors ansible installera la module puis notifiera le <code>handler</code> "reload apache2 service".
+			Ce dernier effectuera une <em>reload</em> de la configuration du serveur. Les <code>handlers</code> sont donc une façon
+			simple de définir des tâches conditionnelles.</p>
+		</section>
+		
+		<section>
+			<h2 id="t6">Exécution d'un playbook</h2>
+			
+			<p>Vous pouvez exécuter <code>ansible-playbook</code> avec les paramètres suivants&nbsp;:</p>
+			
+			<dl>
+				<dt>-i &lt;fichier inventaire&gt;</dt>
+				<dd>spécifie le fichier d'inventaire à utiliser.</dd>
+
+				<dt>-C, --check</dt>
+				<dd>ne fait aucun changement. Ansible va se contenter de deviner les modifications qui devraient être realisées sur les machines.</dd>
+
+				<dt>-k</dt>
+				<dd>demande le mot de passe pour la connexion SSH</dd>
+
+				<dt>-u &lt;utilisateur&gt;</dt>
+				<dd>spécifie le login utilisateur pour la connexion SSH</dd>
+
+				<dt>-b, --become</dt>
+				<dd>exécute les commandes distantes en tant que superutilisateur</dd>
+
+				<dt>-K</dt>
+				<dd>demande le mot de passe pour les opérations demandant des privilèges (principalement lors de l'exécution d'une commande <code>sudo</code> sur la machine distante)</dd>
+			</dl>
+			
+			<figure>
+				<figcaption>Exemple d'exécution d'un playbook</figcaption>
+				<pre><code class="bash hljs">
+ansible-playbook -i &lt;inventaire&gt; -k -K -b monplaybook.yml
+				</code></pre>
+			</figure>
+			
+			
+		</section>
+	</article>
+
+	<article class="exercice">
+		<h2 id="t7">Exercice&nbsp;: premier playbook</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>utiliser <code>ansible-playbook</code></dd>
+		</dl>
+		<p>Exécuter le playbook suivant sur un conteneur LXC&nbsp;:</p>
+
+		<pre><code class="yaml hljs">
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">- hosts:</span> web
+
+<span class="hljs-attr">  handlers:</span>
+<span class="hljs-bullet">    -</span> name : reload apache2 service
+<span class="hljs-attr">      service:</span> name=apache2 state=reloaded enabled=<span class="hljs-literal">yes</span>
+
+<span class="hljs-attr">  tasks:</span>
+<span class="hljs-attr">    - name:</span> checks apache2 is present
+<span class="hljs-attr">      package:</span> name=apache2 state=present
+
+<span class="hljs-attr">    - name:</span> checks apache2 modules enabled
+<span class="hljs-attr">      apache2_module:</span> name=ssl state=present
+<span class="hljs-attr">      notify:</span>
+<span class="hljs-bullet">        -</span> reload apache2 service
+		</code></pre>
+		
+		<p>Vérifier que le serveur HTTP est bien disponible.</p>
+		<p>Relancez le même playbook pour voir ce qu'il se passe...</p>
+	</article>
+
+	<article class="exercice">
+		<h2 id="t8">Exercice&nbsp;: hébergement du cours</h2>
+		<dl>
+			<dt>Objectif</dt>
+			<dd>Utiliser <code>ansible-playbook</code> pour monter un serveur Web qui héberge ce cours.</dd>
+		</dl>
+		
+		<p>Une archive du site est téléchargeable à <a href="https://github.com/spoonless/epsi-b3-deploiement-continu/archive/gh-pages.zip">cette adresse</a>.
+		Mais ce site est également <a href="https://github.com/spoonless/epsi-b3-deploiement-continu/tree/gh-pages">un dépôt GitHub</a> sur la branche <strong>gh-pages</strong>.</p>
+		
+		
+		<aside class="tip">
+			<p>Pour cet exercice, vous aurez besoin de consulter <a href="http://docs.ansible.com/ansible/modules_by_category.html">la liste des modules Ansible</a>
+			pour sélectionner ceux qui vous permettront de réaliser les tâches nécessaires.</p>
+		</aside>
+
+		<p>Testez votre playbook avec un conteneur LXC.</p>
+		<p>Sauvegardez votre projet dans un dépôt GitHub&nbsp;!</p>
+		
+	</article>
+
+	<footer class="license">
+		<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/"><img alt="Licence Creative Commons" style="border-width:0" src="./Ansible_files/88x31.png"></a><br>Cette œuvre est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/fr/">Licence Creative Commons Attribution -  Partage dans les Mêmes Conditions 3.0 France</a>.
+	</footer>
+
+
+</body></html>
